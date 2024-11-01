@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -46,7 +45,7 @@
     }).addTo(map);
 
     // Define layers for control
-    let zonesLayer, wasteContainersLayer;
+    let zonesLayer, wasteContainersLayer, buildingsLayer;
 
     // Load GeoJSON data for Zones and define onEachFeature event
     $.getJSON("RamallahZones.json", function(RZ) {
@@ -89,15 +88,37 @@
       }).addTo(map);
     });
 
+    // Load GeoJSON data for Buildings and add to the map
+    $.getJSON("buildings.geojson", function(buildingsData) {
+      buildingsLayer = L.geoJson(buildingsData, {
+        style: function(feature) {
+          return {
+            color: "blue",
+            weight: 1,
+            opacity: 0.5,
+            fillOpacity: 0.3,
+            fillColor: "blue"
+          };
+        },
+        onEachFeature: function(feature, layer) {
+          layer.on('click', function(e) {
+            alert("Building ID: " + feature.properties.ID);
+          });
+        }
+      }).addTo(map);
+    });
+
     // Add layers to map with control options
     const baseLayers = {};
     const overlays = {
       "Zones": zonesLayer,
-      "Waste Containers": wasteContainersLayer
+      "Waste Containers": wasteContainersLayer,
+      "Buildings": buildingsLayer
     };
 
     // Add layer control to the map
-    L.control.layers(baseLayers, overlays).addTo(map);</script>
+    L.control.layers(baseLayers, overlays).addTo(map);
+  </script>
 </body>
 
 </html>
